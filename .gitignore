@@ -4,3 +4,4 @@ bin/
 TextParse_ChrisSid*/
 SharedCS_ChrisSid*/
 wwwroot/
+nuget.config

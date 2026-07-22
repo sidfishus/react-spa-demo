@@ -27,10 +27,14 @@ const CreateCarouselImage = (src: string, link: string, text: string) => {
 }
 
 const carouselImgs: ICarouselImg[] = [
+    CreateCarouselImage(CreateRepoUrl("img/findex/IMG_0599.PNG"),"/portfolio/findex","Findex"),
+
     CreateCarouselImage(CreateRepoUrl("img/fishingwebapp/spotsnap1.jpg"),"/portfolio/fishingwebapp",
         "Fishing Web Application"),
 
     CreateCarouselImage(CreateRepoUrl("img/hands/homepage1.jpg"),"/portfolio/hands","CAIRS"),
+
+    CreateCarouselImage(CreateRepoUrl("img/findex/addbaitmix.png"),"/portfolio/findex","Findex"),
 
     CreateCarouselImage(CreateRepoUrl("img/blythemillsheds/homemiddlemobile.png"),"/portfolio/blythemillsheds",
         "Blythe Mill Sheds"),
@@ -40,6 +44,8 @@ const carouselImgs: ICarouselImg[] = [
 
     CreateCarouselImage(CreateRepoUrl("img/textparse/textparsemobile.jpg"),"/textparse","Text Parse"),
 
+    CreateCarouselImage(CreateRepoUrl("img/findex/filters-radius.png"),"/portfolio/findex","Findex"),
+
     CreateCarouselImage(CreateRepoUrl("img/misc/nextjs-demo-recharts.png"),"/portfolio/misc",
         "Next JS Weather Demo"),
 
@@ -47,6 +53,8 @@ const carouselImgs: ICarouselImg[] = [
         "Blythe Mill Sheds"),
 
     CreateCarouselImage(CreateRepoUrl("img/hands/report7.jpg"),"/portfolio/hands","CAIRS"),
+
+    CreateCarouselImage(CreateRepoUrl("img/findex/spot-picker-mobile.png"),"/portfolio/findex","Findex"),
 
     CreateCarouselImage(CreateRepoUrl("img/fishingwebapp/spotsnap3.jpg"),"/portfolio/fishingwebapp",
         "Fishing Web Application"),
@@ -59,6 +67,8 @@ const carouselImgs: ICarouselImg[] = [
 
     CreateCarouselImage(CreateRepoUrl("img/blythemillsheds/selectstyles.png"),"/portfolio/blythemillsheds",
         "Blythe Mill Sheds"),
+
+    CreateCarouselImage(CreateRepoUrl("img/findex/catcheditspotpicker.png"),"/portfolio/findex","Findex"),
 
     CreateCarouselImage(CreateRepoUrl("img/misc/nextjs-demo-pagespeed.png"),"/portfolio/misc",
         "Next JS Weather Demo"),
@@ -171,7 +181,8 @@ interface IAboutSection {
 
 const skillsMatrixDescr=
     <>A list of the computer programming related technologies and concepts that I am skilled in
-    with an approximation of how much experience I have in years, and the specific areas that I remember working on.</>;
+    with an approximation of how much experience I have in years, and the specific areas that I remember working on.
+    As of February 2025 I've stopped adding new skills to this list!</>;
 
 const textParseDemoDescr=
     <>The purpose of this was to create an extensive ASP .NET React/Typescript application with a rich GUI
@@ -194,13 +205,6 @@ const aboutSections: IAboutSection[] = [
     {
         section: <>Portfolio</>,
         descr: <>Documents some of my work from 2017 onwards including screenshots and links to the code where possible.
-            Includes the <Link to="/portfolio/fishingwebapp" className="boldLink">fishing web application</Link>, <Link
-                to="/portfolio/blythemillsheds" className="boldLink">Blythe Mill Sheds</Link>, <Link
-                to="/portfolio/dpa" className="boldLink">Distributed SPA</Link>, <Link
-                to="/portfolio/hands" className="boldLink"> Health and Safety system</Link>, <Link
-                to="/portfolio/textparse" className="boldLink"> Text Parse library</Link>, <Link
-                to="/portfolio/scriptabletemplate" className="boldLink"> Scriptable Template</Link> and <Link
-                to="/portfolio/misc" className="boldLink"> miscellaneous work</Link>.
             </>
     },
     {
@@ -254,15 +258,15 @@ const AboutThisApplication = () => {
                     I have been able to complete the remaining parts in my spare time whilst being a father and having a full
                     time job and the first version of the application was complete in July 2021. Typically, I have
                     added more features and have gone in to far more detail than I originally intended and
-                    it will only expand over time. This application was last updated on February 2025.</p>
+                    it will only expand over time. This application was last updated on July 2026.</p>
                 <p>
                     I have developed this specifically to have a good UX on mobiles, tablets, laptops and computers,
                     but it is best viewed on a large screen and this is particularly true for the <Link
                     to="/textparse">text parse user interface </Link> due to it's complexity.
                 </p>
                 <p>
-                    I recommend you start by taking a look at my latest work on the <Link
-                    className="boldLink" to={"/portfolio/fishingwebapp"}>Fishing web application</Link>.
+                    I recommend you start by taking a look at my latest work on <Link
+                    className="boldLink" to={"/portfolio/findex"}>Findex</Link>.
                 </p>
             </SegmentSubSection>
 
@@ -289,7 +293,7 @@ const AboutThisApplication = () => {
                     The entire sourcecode for both the service side and client side applications is held in <a
                         href="https://github.com/sidfishus/react-spa-demo">Github</a>.
                 </p>
-                <p>Some of the core technologies used include: ASP .NET 9, C#, React, Javascript, Typescript,
+                <p>Some of the core technologies used include: ASP .NET 9, C#, React, Typescript,
                     Semantic UI React (the UI framework), Vite, React Router, Google Analytics, and my <a
                         href={"https://www.npmjs.com/package/react-cscarousel"}>react-cscarousel</a>.</p>
             </SegmentSubSection>

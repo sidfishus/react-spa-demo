@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>findex.fish — System Architecture</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface-2: #243044;
+      --border: #2d3a4f;
+      --text: #e6edf3;
+      --text-muted: #8b9cb3;
+      --accent: #3d8bfd;
+      --accent-soft: rgba(61, 139, 253, 0.12);
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "Cascadia Code", "Fira Code", ui-monospace, monospace;
+      --max-width: 960px;
+      --radius: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .hero {
+      padding: 3rem 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    }
+
+    .hero-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--text-muted);
+      max-width: 52ch;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(61, 139, 253, 0.25);
+      border-radius: 999px;
+    }
+
+    nav.toc {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 0.75rem 1.5rem;
+      background: rgba(15, 20, 25, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    nav.toc ul {
+      display: flex;
+      gap: 0.25rem 1.25rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0;
+      list-style: none;
+      white-space: nowrap;
+    }
+
+    nav.toc a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+
+    nav.toc a:hover {
+      color: var(--accent);
+    }
+
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    section {
+      margin-bottom: 3.5rem;
+    }
+
+    section h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.375rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    section h3 {
+      margin: 2rem 0 0.75rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    section > p {
+      margin: 0 0 1.25rem;
+      color: var(--text-muted);
+    }
+
+    .diagram {
+      margin: 1.25rem 0;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+
+    .diagram .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: min-content;
+    }
+
+    table {
+      width: 100%;
+      margin: 1rem 0;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    td code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      color: var(--accent);
+    }
+
+    ul.config-list {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    ul.config-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    ul.config-list code {
+      font-family: var(--mono);
+      font-size: 0.85em;
+      color: var(--accent);
+    }
+
+    footer {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.5rem; }
+      .diagram { padding: 0.75rem; }
+      table { font-size: 0.82rem; }
+      th, td { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="badge">Case study</span>
+      <h1>findex.fish — System Architecture</h1>
+      <p>Offline-first fishing log PWA. Svelte client, Rust API, SQLite, Google Drive sync, and systemd background workers.</p>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Sections">
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#frontend">Frontend</a></li>
+      <li><a href="#backend">Backend</a></li>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#flows">Data flows</a></li>
+      <li><a href="#repo">Repo layout</a></li>
+      <li><a href="#stack">Tech stack</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section id="overview">
+      <h2>1. System overview</h2>
+      <p>Single-region deployment: one Rust process serves the API and production SPA. Private catch data stays on the client (OPFS + Google Drive sync). Public/social features hit the server.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TB
+    subgraph Client["Browser — Svelte 5 PWA"]
+        UI["UI pages<br/><i>AppNew.svelte, pages/*</i>"]
+        SW["Service Worker<br/><i>sw.ts — offline precache</i>"]
+        LW["localSqlDb Web Worker<br/><i>sqlite-wasm + Comlink</i>"]
+        OPFS[("OPFS SQLite<br/>private catches, blobs")]
+        UI --> LW
+        LW --> OPFS
+        UI --- SW
+    end
+
+    subgraph External["External services"]
+        GAuth["Google OAuth"]
+        GDrive["Google Drive API"]
+        GCS["Google Cloud Storage"]
+        FB["Facebook Graph / CAPI"]
+        OSM["OpenStreetMap tiles"]
+        GeoIP["MaxMind GeoLite2"]
+    end
+
+    subgraph Server["Server — fishingwebapp-api (Rust / Axum)"]
+        API["HTTP API + SPA static files"]
+        DBS[("6× SQLite databases")]
+        FS["CatchImages filesystem"]
+        API --> DBS
+        API --> FS
+    end
+
+    subgraph Workers["Background workers (systemd timers)"]
+        MOD["image_moderator.py<br/>every 5 min"]
+        BAK["backup CLI<br/>every 30 min, 01:00–05:00 UTC"]
+    end
+
+    UI -->|"HTTPS /api/*"| API
+    UI -->|"PKCE login"| GAuth
+    GAuth -->|"exchange-code"| API
+    LW -->|"PeriodicSync 5s"| GDrive
+    LW -->|"Bearer JWT"| API
+    UI --> OSM
+
+    MOD -->|"read pending catches"| DBS
+    MOD -->|"POST /api/internal/publiccatch/moderate"| API
+    API --> FB
+    BAK --> DBS
+    BAK --> FS
+    BAK --> GCS
+    API -->|"enqueue pending_blob_backup"| DBS
+    API -.-> GeoIP
+        </pre>
+      </div>
+    </section>
+
+    <section id="frontend">
+      <h2>2. Frontend</h2>
+      <p>Offline-first PWA. All private CRUD runs in a Web Worker against local SQLite. The main thread talks to the API for auth, static data, and public-catch sharing.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+    subgraph Entry["Entry & shell"]
+        main["main.ts"]
+        app["AppNew.svelte<br/>client routing (page)"]
+        util["AppUtil.svelte.ts<br/>init, auth, sync loop"]
+        main --> app --> util
+    end
+
+    subgraph Pages["Feature pages"]
+        catch["catch/*"]
+        fishery["fishery/*"]
+        forum["forum/*"]
+        settings["settings/*"]
+        connect["connect/*"]
+    end
+
+    subgraph Lib["Shared lib"]
+        auth["auth — PKCE, token refresh"]
+        config["config — VITE_APP_BASE_URL"]
+        retry["retryFetch, withTokenRefreshRetry"]
+        stores["stores — user, settings"]
+    end
+
+    subgraph Worker["localSqlDb worker"]
+        core["core.ts — PeriodicSync"]
+        syncE["syncExportProcess.ts"]
+        syncI["syncImportProcess.ts"]
+        share["ShareCatch.ts"]
+        upload["uploadJobProcessor.ts"]
+        migrate["migrations/*"]
+        core --> syncE
+        core --> syncI
+        syncE --> upload
+        syncE --> share
+    end
+
+    subgraph Local["Local storage"]
+        opfs[("OPFS SQLite")]
+    end
+
+    app --> Pages
+    Pages --> Lib
+    util -->|"Comlink"| Worker
+    Worker --> opfs
+    Lib -->|"fetch /api/*"| API2["Rust API"]
+    share -->|"POST catchimages, publiccatch"| API2
+    syncE --> GDrive2["Google Drive"]
+    syncI --> GDrive2
+        </pre>
+      </div>
+
+      <h3>Frontend background loops (in-browser)</h3>
+      <table>
+        <thead>
+          <tr><th>Loop</th><th>Interval</th><th>Location</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PeriodicSync</td><td>5 s</td><td><code>AppUtil.svelte.ts</code> → <code>core.ts</code></td><td>Drive export (writer) or import (reader)</td></tr>
+          <tr><td>Upload jobs</td><td>during export</td><td><code>uploadJobProcessor.ts</code></td><td>Incremental + monthly DB zip → Drive</td></tr>
+          <tr><td>ShareCatch</td><td>during writer sync</td><td><code>ShareCatch.ts</code></td><td>Upload images, create public catch</td></tr>
+          <tr><td>Static data refresh</td><td>~30 min</td><td><code>staticData.ts</code></td><td>Refresh reference data from API</td></tr>
+          <tr><td>Service worker</td><td>on install</td><td><code>sw.ts</code></td><td>Precache, SPA fallback, OSM CORP headers</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="backend">
+      <h2>3. Backend</h2>
+      <p>Monolithic Axum router. Handlers → repositories → SQLite. No ORM. Writes batched via <code>BatchWriter</code>; reads use <code>deadpool-sqlite</code> pools.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TB
+    subgraph HTTP["Axum router — setup_router.rs"]
+        MW["Middleware stack<br/>CORS · security headers · GeoIP · JWT · internal key"]
+        RAuth["/api/auth/google/*"]
+        RAuthFB["/api/auth/facebook/*"]
+        RStatic["/api/staticdata"]
+        RPC["/api/publiccatch/*"]
+        RImg["/api/catchimages/*"]
+        RForum["/api/forum/*"]
+        RUser["/api/user/*"]
+        RInteg["/api/integrations/*"]
+        RLog["/api/log"]
+        RInternal["/api/internal/*"]
+        RSPA["/* — SPA + SEO fishery pages"]
+        MW --> RAuth & RAuthFB & RStatic & RPC & RImg & RForum & RUser & RInteg & RLog & RInternal & RSPA
+    end
+
+    subgraph Layers["Application layers"]
+        handlers["handlers/*.rs"]
+        repos["repositories/*.rs"]
+        services["services/*.rs"]
+        handlers --> repos
+        handlers --> services
+    end
+
+    subgraph Services["Key services"]
+        jwt["jwt · refresh_session · encryption"]
+        cache["static_data_cache"]
+        fbSvc["facebook_graph · facebook_page · facebook_capi"]
+        modSvc["public_catch_moderation · bait_caption · image_badge"]
+    end
+
+    subgraph Data["Persistence"]
+        userDB[("user.db")]
+        staticDB[("staticdata.db")]
+        catchDB[("publiccatch.db")]
+        bgDB[("backgroundtasks.db")]
+        forumDB[("forum.db")]
+        integDB[("integrations.db")]
+        imgFS["Data/CatchImages/"]
+    end
+
+    RAuth & RAuthFB & RStatic & RPC & RForum & RUser & RInteg & RInternal --> handlers
+    RImg --> handlers
+    handlers --> Services
+    repos --> userDB & staticDB & catchDB & bgDB & forumDB & integDB
+    handlers --> imgFS
+        </pre>
+      </div>
+
+      <h3>SQLite databases</h3>
+      <table>
+        <thead>
+          <tr><th>Schema</th><th>File</th><th>Contents</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>user</code></td><td><code>WebApp/Data/user.db</code></td><td>Users, scopes, settings, notifications</td></tr>
+          <tr><td><code>staticdata</code></td><td><code>WebApp/Data/staticdata.db</code></td><td>Fisheries, lakes, baits, translations</td></tr>
+          <tr><td><code>publiccatch</code></td><td><code>WebApp/Data/publiccatch.db</code></td><td>Public catches, likes, comments, approval</td></tr>
+          <tr><td><code>backgroundtasks</code></td><td><code>WebApp/Data/backgroundtasks.db</code></td><td><code>pending_blob_backup</code> queue</td></tr>
+          <tr><td><code>forum</code></td><td><code>WebApp/Data/forum.db</code></td><td>Threads, comments</td></tr>
+          <tr><td><code>integrations</code></td><td><code>WebApp/Data/integrations.db</code></td><td>Facebook page tokens/bindings</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Config</h3>
+      <ul class="config-list">
+        <li>Backend: <code>WebApp/config/config.yaml</code> (+ <code>config.Development.yaml</code> in debug)</li>
+        <li>Override: env <code>FISHINGWEBAPP_CONFIG</code></li>
+        <li>Frontend: <code>WebApp/ClientApp/.env.development</code> / <code>.env.production</code></li>
+      </ul>
+    </section>
+
+    <section id="background">
+      <h2>4. Background tasks</h2>
+      <p>No Redis/Bull/Celery. Server-side work uses SQLite queues + systemd timers. Client-side work uses PeriodicSync in the browser.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TB
+    subgraph Triggers["Triggers"]
+        upload["Image upload<br/>POST /api/catchimages/upload"]
+        timer5["systemd: image-moderation.timer<br/>every 5 min"]
+        timer30["systemd: backup.timer<br/>01:00–05:00 UTC, every 30 min"]
+        sync5["Browser: PeriodicSync<br/>every 5 s"]
+    end
+
+    subgraph InProcess["In-process (API server)"]
+        BW["BatchWriter<br/>batched SQLite writes"]
+        enqueue["background_tasks repo<br/>INSERT pending_blob_backup"]
+        upload --> enqueue
+    end
+
+    subgraph ModWorker["image_moderation.service"]
+        modPy["image_moderator.py<br/>NudeNet classifier"]
+        modPy -->|"status=200 pending"| catchRead[("publiccatch.db")]
+        modPy -->|"POST moderate"| internalAPI["/api/internal/publiccatch/moderate"]
+        internalAPI --> fbPost["Facebook auto-post on approve"]
+    end
+
+    subgraph BackupWorker["backup.service"]
+        backupBin["backup CLI (Rust)<br/>--features gcs"]
+        backupBin --> allDBs["All SQLite DBs → GCS"]
+        backupBin --> blobQ["Process pending_blob_backup"]
+        blobQ --> imgZip["Zip full+thumb images → GCS"]
+    end
+
+    subgraph ClientSync["Client sync (writer device)"]
+        sync5 --> driveExport["Export DB zip → Google Drive"]
+        sync5 --> shareFlow["ShareCatch → API"]
+        sync5 --> driveImport["Import from Drive (readers)"]
+    end
+
+    timer5 --> modPy
+    timer30 --> backupBin
+    enqueue --> blobQ
+        </pre>
+      </div>
+
+      <h3>Systemd units (repo root)</h3>
+      <table>
+        <thead>
+          <tr><th>Unit</th><th>Schedule</th><th>Binary</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>hooked-app.service</code></td><td>always on</td><td><code>fishingwebapp-api</code></td></tr>
+          <tr><td><code>image-moderation.timer</code></td><td>every 5 min</td><td><code>moderation/image_moderator.py</code></td></tr>
+          <tr><td><code>backup.timer</code></td><td>01:00–05:00 UTC, 30 min</td><td><code>backup/target/release/backup</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="flows">
+      <h2>5. Key data flows</h2>
+
+      <h3>Public catch share</h3>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+    actor User
+    participant UI as Svelte UI
+    participant Worker as localSqlDb worker
+    participant API as Rust API
+    participant FS as CatchImages FS
+    participant Mod as image_moderator.py
+    participant FB as Facebook
+
+    User->>UI: Mark catch for public share
+    Note over Worker: PeriodicSync (writer, 5s)
+    Worker->>API: POST /api/catchimages/upload
+    API->>FS: Store full + thumb
+    API->>API: Enqueue pending_blob_backup
+    Worker->>API: POST /api/publiccatch
+    API->>API: status = pending moderation
+
+    loop every 5 min
+        Mod->>API: GET pending catches + classify
+        Mod->>API: POST /api/internal/publiccatch/moderate
+    end
+
+    API->>FB: Auto-post on approval
+    User->>UI: View in public feed
+    UI->>API: GET /api/publiccatch/*
+        </pre>
+      </div>
+
+      <h3>Private data sync (Google Drive)</h3>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+    participant Writer as Writer device
+    participant Drive as Google Drive
+    participant Reader as Reader device
+    participant OPFS_W as OPFS SQLite (writer)
+    participant OPFS_R as OPFS SQLite (reader)
+
+    Writer->>OPFS_W: Local CRUD (all private data)
+    loop every 5s
+        Writer->>OPFS_W: Export incremental DB zip
+        Writer->>Drive: Upload blob (writer lock)
+    end
+    loop every 5s
+        Reader->>Drive: Check for new blobs
+        Reader->>OPFS_R: Import / merge
+    end
+    Note over Writer,Reader: Server never stores private catch data
+        </pre>
+      </div>
+    </section>
+
+    <section id="repo">
+      <h2>6. Repository layout</h2>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+    root["fishingwebapp-v2/"]
+
+    root --> WebApp
+    root --> backup
+    root --> moderation
+    root --> scripts
+    root --> docs
+
+    subgraph WebApp["WebApp/"]
+        CA["ClientApp/<br/>Svelte PWA"]
+        src["src/<br/>Rust API"]
+        data["Data/<br/>SQLite + images"]
+        cfg["config/<br/>YAML"]
+    end
+
+    subgraph backup["backup/"]
+        bakRust["Rust CLI → GCS"]
+    end
+
+    subgraph moderation["moderation/"]
+        modPy2["Python + NudeNet"]
+    end
+
+    subgraph scripts["scripts/"]
+        py["One-off Python imports"]
+    end
+        </pre>
+      </div>
+    </section>
+
+    <section id="stack">
+      <h2>7. Technology stack</h2>
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Technologies</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Frontend</td><td>Svelte 5, TypeScript, Vite 7, PWA/Workbox, sqlite-wasm, Leaflet, Luxon</td></tr>
+          <tr><td>Backend</td><td>Rust, Tokio, Axum, rusqlite, deadpool-sqlite, JWT, reqwest</td></tr>
+          <tr><td>Background</td><td>systemd timers, Python (NudeNet), Rust backup CLI</td></tr>
+          <tr><td>Storage</td><td>6× SQLite, filesystem images, OPFS (client), GCS (backups)</td></tr>
+          <tr><td>Auth</td><td>Google OAuth PKCE, HTTP-only refresh cookies, JWT bearer</td></tr>
+          <tr><td>Sync</td><td>Google Drive API (client-side, writer/reader model)</td></tr>
+          <tr><td>Deploy</td><td>Bare metal, TLS, no Docker Compose</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <footer>
+    Architecture source: docs/architecture.md · Diagrams rendered with Mermaid.js
+  </footer>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      themeVariables: {
+        primaryColor: "#243044",
+        primaryTextColor: "#e6edf3",
+        primaryBorderColor: "#3d8bfd",
+        lineColor: "#8b9cb3",
+        secondaryColor: "#1a2332",
+        tertiaryColor: "#0f1419",
+        fontFamily: "Segoe UI, system-ui, sans-serif",
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: "basis",
+      },
+      sequence: {
+        actorMargin: 40,
+        messageMargin: 35,
+      },
+    });
+  </script>
+</body>
+</html>

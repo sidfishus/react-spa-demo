@@ -303,7 +303,7 @@ const skillsMatrix: ISkillRow[] = [
         experienceCommercial: [2 /* Prophet */, {startDate: WestleighCountrysideStartDate} /* Westleigh/Countryside */],
         areas: <>Object oriented programming, functional programming, generics, multiple threading,
             'Task' / async / await, parsing, see .NET for more.<AreaLinkBreak/>
-            Used in the majority of my <a href="">Github repositories</a> but most comprehensively in the
+            Used in the majority of my <a href="https://github.com/sidfishus">Github repositories</a> but most comprehensively in the
             <Link to="/portfolio/textparse"> text parse library</Link>,
             <Link to="/portfolio/scriptabletemplate"> scriptable template library</Link> and the
             <a href="https://github.com/sidfishus/CoinbaseProTools"> Coinbase Pro Tools application</a>.</>

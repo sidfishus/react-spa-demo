@@ -5,6 +5,8 @@ import { Menu, Dropdown, Icon } from "semantic-ui-react";
 import { eScreenResolution } from "../Client App";
 import { ContainerDemo } from "../Presentation";
 import { useNavigate } from "react-router-dom";
+import { CreateRepoUrl } from "../../CreateRepoUrl.ts";
+import "./Styles.scss";
 
 export interface IDemoMenuProps extends IRoutedCompProps {
     activeMenuId: eMenuId;
@@ -13,8 +15,9 @@ export interface IDemoMenuProps extends IRoutedCompProps {
 export enum eMenuId {
     home=1,
     textParse,
+    portfolioFindex,
+    portfolioStart=portfolioFindex,
     portfolioFishingWebApp,
-    portfolioStart=portfolioFishingWebApp,
     portfolioBlytheMillSheds,
     portfolioHAndS,
     portfolioDPA,
@@ -119,6 +122,24 @@ export const DemoMenu = (props: IDemoMenuProps) => {
                         lastMenuId: eMenuId.portfolioLast,
                         activeMenuId: activeMenuId,
                         children: [
+                            SubMenuItem({
+                                activeMenuId: activeMenuId,
+                                menuId: eMenuId.portfolioFindex,
+                                children: <>
+                                    <span className="menu-item-inline">
+                                        Findex{" "}
+                                        <img
+                                            src={CreateRepoUrl("img/findex/logo-header-transparent.svg")}
+                                            alt=""
+                                            aria-hidden="true"
+                                            style={{ height: "1.4em", marginLeft: "0.15em" }}
+                                        />
+                                    </span>
+                                </>,
+                                onClick: ()=> navigate("/portfolio/findex"),
+                                key: "findex"
+                            }),
+
                             SubMenuItem({
                                 activeMenuId: activeMenuId,
                                 menuId: eMenuId.portfolioFishingWebApp,
@@ -239,30 +260,27 @@ const MenuVerticle = (props: IMenuHeaderProps): JSX.Element => {
     return (
         <>
             <ContainerDemo>
-                <Menu secondary>
-                    <Menu.Item fitted>
-                        <Icon
-                            name="bars"
-                            link
-                            size="big"
-                            onClick={()=>SetVerticalOpenState(curState => !curState)}
-                        />
-                    </Menu.Item>
-                    
-                    <Menu.Item position="right">
-                        <Logo style={{marginRight: "-8px"}} />
-                    </Menu.Item>
-                </Menu>
-            </ContainerDemo>
+                <div className={`menu-mobile-shell${verticalOpenState ? " menu-mobile-shell--open" : ""}`}>
+                    <Menu secondary className="menu-mobile-bar">
+                        <Menu.Item fitted>
+                            <Icon
+                                name="bars"
+                                link
+                                size="big"
+                                onClick={()=>SetVerticalOpenState(curState => !curState)}
+                            />
+                        </Menu.Item>
+                        
+                        <Menu.Item position="right">
+                            <Logo style={{marginRight: "-8px"}} />
+                        </Menu.Item>
+                    </Menu>
 
-            {verticalOpenState &&
-                <>
-                    <ContainerDemo>
-                        <Menu fluid className="vertical">{props.children}</Menu>
-                    </ContainerDemo>
-                    <br/>
-                </>
-            }
+                    {verticalOpenState &&
+                        <Menu fluid className="vertical menu-mobile-nav">{props.children}</Menu>
+                    }
+                </div>
+            </ContainerDemo>
         </>
     );
 }
@@ -276,14 +294,13 @@ const Logo = (props: ILogoProps)  => {
     const style = ((props.style)?props.style:{});
 
     return (
-        <>
-            <span style={{fontSize: 26}}>
-                <b>Chris Siddall</b>
+        <span className="menu-logo" style={style}>
+            <span className="menu-logo-monogram" aria-hidden="true">CS</span>
+            <span className="menu-logo-content">
+                <span className="menu-logo-name">Chris Siddall</span>
+                <span className="menu-logo-portfolio">Portfolio</span>
             </span>
-            <span style={{fontSize: 16, color: "#2185d0", marginTop: "3px", ...style}}>
-                &nbsp;Portfolio
-            </span>
-        </>
+        </span>
     );
 };
 

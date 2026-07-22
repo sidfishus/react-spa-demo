@@ -36,7 +36,7 @@ export const PortfolioBase = (props: IPortfolioBaseProps) => {
             <ContainerDemo>
                 {heading}
 
-                {carouselImgs &&
+                {carouselImgs.length > 0 &&
                     <SegmentDemo heading="Images (click to view full screen)">
                         <PortfolioCarousel
                             SetOpenImg={SetOpenImg}

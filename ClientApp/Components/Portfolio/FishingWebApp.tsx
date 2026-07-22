@@ -2,6 +2,7 @@ import {IRoutedCompProps} from "../../routes.tsx";
 import {CreateImage, ITechnologyInfo, PortfolioBase, TechnologyTable} from "./PortfolioBase.tsx";
 import {CreateRepoUrl} from "../../CreateRepoUrl.ts";
 import * as React from "react";
+import {Link} from "react-router-dom";
 import {SegmentDemo, SegmentSubSection} from "../Presentation.tsx";
 import {ICarouselImg} from "../PortfolioCarousel.tsx";
 
@@ -124,7 +125,9 @@ const heading=(
                 which is secured and backed up in the cloud.
                 </p>
             <p>
-                It has huge potential but unfortunately is still a work in progress.
+                <s>It has huge potential but unfortunately is still a work in progress.</s>{" "}
+                It has since been rewritten and released as{" "}
+                <Link to="/portfolio/findex">Findex</Link>.
             </p>
         </SegmentSubSection>
     </SegmentDemo>

@@ -17,6 +17,7 @@ import { Education } from "./Components/History/Education";
 import { Career } from "./Components/History/Career";
 import { MatchMediaResult } from "./Library/MediaMatching";
 import {FishingWebAppPortfolio} from "./Components/Portfolio/FishingWebApp.tsx";
+import { FindexPortfolio } from "./Components/Portfolio/Findex.tsx";
 
 
 export type IPrerenderData = {
@@ -119,6 +120,16 @@ const ScriptableTemplatePortfolioRouted = (props: IRoutedCompProps) => {
     );
 };
 
+const FindexPortfolioRouted = (props: IRoutedCompProps) => {
+    return (
+        <StdPage
+            pageRender={() => <FindexPortfolio {...props} />}
+            stdProps={props}
+            menuId={eMenuId.portfolioFindex}
+        />
+    );
+};
+
 const MiscPortfolioRouted = (props: IRoutedCompProps) => {
     return (
         <StdPage
@@ -192,6 +203,7 @@ export const Routes = (props: IRoutedCompProps) => {
             <Route path="hands" element={<HAndSPortfolioRouted {...props} />} />
             <Route path="textparse" element={<TextParsePortfolioRouted {...props} />} />
             <Route path="scriptabletemplate" element={<ScriptableTemplatePortfolioRouted {...props} />} />
+            <Route path="findex" element={<FindexPortfolioRouted {...props} />} />
             <Route path="misc" element={<MiscPortfolioRouted {...props} />} />
         </Route>,
         <Route path="/skillsmatrix" element={<SkillsMatrixRouted {...props} />} />,

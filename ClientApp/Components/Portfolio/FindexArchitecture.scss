@@ -1,0 +1,33 @@
+.findex-architecture-diagram {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid rgba(33, 133, 208, 0.25);
+    border-radius: 6px;
+    overflow-x: auto;
+
+    svg {
+        display: block;
+        margin: 0 auto;
+        min-width: min-content;
+    }
+}
+
+.findex-architecture-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+
+    a {
+        color: #2185D0;
+        font-size: 0.9rem;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

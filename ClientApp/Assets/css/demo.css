@@ -1,11 +1,9 @@
-.no-left-border-demo {
-    border: none;
-    border-style: none;
-    background-color: green;
-}
-
-.ui.menu .no-left-border-demo:before {
-    width: 0px;
+body {
+    min-height: 100vh;
+    background-color: #f0f4f8;
+    background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(33, 133, 208, 0.08), transparent),
+        linear-gradient(180deg, #f4f7fb 0%, #eef2f7 100%);
 }
 
 .flex-important {

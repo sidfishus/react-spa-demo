@@ -67,7 +67,7 @@ const heading=(
                 to request quotes.</p>
             <p>It is hosted
                 on <a href={"https://www.ionos.co.uk/hosting/windows-hosting#packages"}>Ionos</a> for a small
-                monthly fee and incorporates a .NET 6 backend written in C#. The front-end
+                monthly fee and incorporates a .NET 8 backend written in C#. The front-end
                 leverages React version 18 and Typescript.
             </p>
         </SegmentSubSection>
@@ -118,7 +118,7 @@ const WriteUp = (): JSX.Element => {
 
 const technology: ITechnologyInfo[] = [
     {
-        name: <>C# / .NET 6</>,
+        name: <>C# / .NET 8</>,
         descr: <>The backend server side application is written in C#.</>
     },
     {
